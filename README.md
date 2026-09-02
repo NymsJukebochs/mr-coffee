@@ -47,3 +47,6 @@ v1.4.1 updates the app icon to use the user-provided white-backed V60 compositio
 
 
 v1.4.2 updates the app icon to use the user-provided full-bleed white source and adds explicit maskable icon entries.
+
+
+v1.4.3 uses separate regular and maskable icon artwork. The maskable icons are deliberately enlarged relative to the regular icons so the V60 body occupies more of the Android launcher badge.
