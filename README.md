@@ -32,3 +32,6 @@ v1.3.6 makes the transparent icon larger and centers it by the visible artwork's
 
 
 v1.3.7 increases the transparent icon scale while keeping weighted-center placement, for a larger V60 within launcher-imposed circular backgrounds.
+
+
+v1.3.8 enlarges the transparent icon again and centers it specifically on the dripper hole / main red circle rather than on the whole artwork.
