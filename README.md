@@ -35,3 +35,6 @@ v1.3.7 increases the transparent icon scale while keeping weighted-center placem
 
 
 v1.3.8 enlarges the transparent icon again and centers it specifically on the dripper hole / main red circle rather than on the whole artwork.
+
+
+v1.3.9 removes the handle from the icon art and centers a larger main dripper circle inside the launcher-imposed white circle.
