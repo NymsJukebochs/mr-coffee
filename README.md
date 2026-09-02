@@ -41,3 +41,6 @@ v1.3.9 removes the handle from the icon art and centers a larger main dripper ci
 
 
 v1.4.0 updates the app icon to use the new centered red dripper artwork.
+
+
+v1.4.1 updates the app icon to use the user-provided white-backed V60 composition.
