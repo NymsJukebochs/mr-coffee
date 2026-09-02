@@ -20,3 +20,6 @@ v1.3.2 adds separate standard and maskable icon assets for Android/PWA installat
 
 
 v1.3.3 redesigns the Android maskable icon to fill the circular launcher mask more boldly, closer to the user's mockup.
+
+
+v1.3.4 removes maskable/adaptive icon assets entirely and uses only transparent standard icons, to test whether Android preserves the V60 silhouette and handle without a background tile.
