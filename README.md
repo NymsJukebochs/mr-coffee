@@ -23,3 +23,6 @@ v1.3.3 redesigns the Android maskable icon to fill the circular launcher mask mo
 
 
 v1.3.4 removes maskable/adaptive icon assets entirely and uses only transparent standard icons, to test whether Android preserves the V60 silhouette and handle without a background tile.
+
+
+v1.3.5 reduces the V60 icon size within the transparent square so Android launchers can display the full dripper more comfortably inside their icon mask.
