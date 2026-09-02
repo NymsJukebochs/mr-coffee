@@ -38,3 +38,6 @@ v1.3.8 enlarges the transparent icon again and centers it specifically on the dr
 
 
 v1.3.9 removes the handle from the icon art and centers a larger main dripper circle inside the launcher-imposed white circle.
+
+
+v1.4.0 updates the app icon to use the new centered red dripper artwork.
