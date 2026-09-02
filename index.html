@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#171411">
+  <title>Mr Coffee</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    :root{
+      --bg:#171411;
+      --panel:#211d19;
+      --panel2:#2a241f;
+      --text:#f5efe8;
+      --muted:#b9aa9b;
+      --accent:#d9a56c;
+      --accent2:#f0c38f;
+      --line:#3a322c;
+      --good:#a9c9a2;
+      --danger:#d89182;
+      --shadow:0 12px 30px rgba(0,0,0,.28);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    body{min-height:100vh;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+    button,input,select{font:inherit}
+    button{touch-action:manipulation}
+    .app{max-width:620px;margin:0 auto;padding:18px 16px 28px}
+    .top{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:14px}
+    h1{font-size:1.35rem;margin:0;letter-spacing:.2px}
+    .sub{color:var(--muted);font-size:.85rem;margin-top:3px}
+    .pill{padding:7px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:.78rem}
+    .tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0 16px}
+    .tab{border:1px solid var(--line);background:var(--panel);color:var(--muted);padding:11px 8px;border-radius:14px;font-weight:700}
+    .tab.active{background:var(--accent);color:#1b130d;border-color:transparent}
+    .view{display:none}.view.active{display:block}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+    .mode{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .mode button{padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);font-weight:800}
+    .mode button.active{background:var(--text);color:#171411;border-color:transparent}
+    .label{color:var(--muted);font-size:.82rem;font-weight:700;margin-bottom:7px}
+    .stepper{display:grid;grid-template-columns:64px 1fr 64px;gap:8px;align-items:center}
+    .stepper button{height:58px;border:0;border-radius:16px;background:var(--panel2);color:var(--text);font-size:1.65rem}
+    .number{height:58px;display:flex;align-items:center;justify-content:center;background:#12100e;border-radius:16px;font-size:1.8rem;font-weight:850}
+    .peopleGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+    .favorites{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+    .favorites button{padding:11px 3px;border:1px solid var(--line);border-radius:13px;background:var(--panel2);color:var(--text);font-weight:850;font-size:.9rem}
+    .favorites button.active{background:var(--accent);color:#1b130d;border-color:transparent}
+    .peopleGrid button{padding:14px 6px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);color:var(--text);font-weight:800}
+    .peopleGrid button.active{background:var(--accent);color:#1b130d;border-color:transparent}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .metric{background:#12100e;border-radius:16px;padding:13px 8px;text-align:center}
+    .metric strong{display:block;font-size:1.55rem;line-height:1.1}
+    .metric span{display:block;color:var(--muted);font-size:.75rem;margin-top:5px}
+    .primary{width:100%;border:0;border-radius:17px;padding:16px;background:var(--accent);color:#1a120c;font-weight:900;font-size:1.05rem}
+    .secondary{width:100%;border:1px solid var(--line);border-radius:15px;padding:13px;background:var(--panel2);color:var(--text);font-weight:800}
+    .timerWrap{text-align:center}
+    .timer{font-variant-numeric:tabular-nums;font-size:3.4rem;font-weight:900;letter-spacing:1px;margin:4px 0 2px}
+    .phase{font-size:1rem;font-weight:850;color:var(--accent2);min-height:24px}
+    .target{color:var(--muted);margin:6px 0 16px}
+    .timerBtns{display:grid;grid-template-columns:2fr 1fr;gap:8px}
+    .hint{color:var(--muted);font-size:.82rem;line-height:1.4;margin-top:10px}
+    table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+    th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:right}
+    th:first-child,td:first-child{text-align:left}
+    th{color:var(--muted);font-size:.78rem;position:sticky;top:0;background:var(--panel)}
+    td{font-weight:700}
+    .tableWrap{max-height:62vh;overflow:auto;border-radius:14px}
+    .settingsGrid{display:grid;gap:12px}
+    .field{display:grid;grid-template-columns:1fr 120px;align-items:center;gap:10px}
+    .field label{font-weight:750}
+    .field small{display:block;color:var(--muted);font-weight:500;margin-top:2px}
+    input{width:100%;padding:11px 10px;border-radius:12px;border:1px solid var(--line);background:#12100e;color:var(--text);text-align:right}
+    .status{font-size:.8rem;color:var(--good);margin-top:8px;text-align:center;min-height:20px}
+    .note{padding:12px 13px;border-radius:14px;background:#16130f;border:1px solid var(--line);color:var(--muted);font-size:.84rem;line-height:1.45}
+    .hidden{display:none!important}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="top">
+      <div>
+        <h1>☕ Mr Coffee</h1>
+        <div class="sub">V60 scale-side helper</div>
+      </div>
+      <div style="text-align:right"><div class="pill" id="ratioBadge">16:1 · 3× bloom</div><div class="sub" style="margin-top:5px">Mr Coffee · v1.3</div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-view="brew">Brew</button>
+      <button class="tab" data-view="chart">Chart</button>
+      <button class="tab" data-view="settings">Settings</button>
+    </div>
+
+    <section id="brew" class="view active">
+      <div class="card">
+        <div class="mode">
+          <button id="singleMode" class="active">Coffee grams</button>
+          <button id="groupMode">People</button>
+        </div>
+      </div>
+
+      <div class="card" id="favoritesCard">
+        <div class="label">Usual brews</div>
+        <div class="favorites" id="favorites">
+          <button data-grams="18">18 g</button>
+          <button data-grams="25">25 g</button>
+          <button data-grams="30">30 g</button>
+          <button data-grams="33">33 g</button>
+          <button data-grams="40">40 g</button>
+        </div>
+      </div>
+
+      <div class="card" id="singleControls">
+        <div class="label">Coffee</div>
+        <div class="stepper">
+          <button id="minusCoffee" aria-label="Decrease coffee">−</button>
+          <div class="number"><span id="coffeeValue">18</span>&nbsp;g</div>
+          <button id="plusCoffee" aria-label="Increase coffee">+</button>
+        </div>
+      </div>
+
+      <div class="card hidden" id="groupControls">
+        <div class="label">How many people?</div>
+        <div class="peopleGrid" id="peopleGrid"></div>
+        <div class="hint"><span id="perPersonText">18</span> g coffee per person</div>
+      </div>
+
+      <div class="card">
+        <div class="metrics">
+          <div class="metric"><strong id="metricCoffee">18</strong><span>COFFEE g</span></div>
+          <div class="metric"><strong id="metricWater">288</strong><span>WATER g</span></div>
+          <div class="metric"><strong id="metricBloom">54</strong><span>BLOOM TO g</span></div>
+        </div>
+        <div class="metrics" style="margin-top:8px;grid-template-columns:1fr 1fr">
+          <div class="metric"><strong id="metricSugar">2.2</strong><span>SUGAR GUIDE</span></div>
+          <div class="metric"><strong id="metricPeople">1</strong><span>APPROX. PEOPLE</span></div>
+        </div>
+      </div>
+
+      <div class="card timerWrap">
+        <div class="label">Brew timer</div>
+        <div class="timer" id="timer">0:00</div>
+        <div class="phase" id="phase">Ready</div>
+        <div class="target" id="target">Bloom to 54 g</div>
+        <div class="timerBtns">
+          <button class="primary" id="timerMain">START BREW</button>
+          <button class="secondary" id="timerReset">RESET</button>
+        </div>
+        <div class="hint">Bloom phase defaults to <span id="bloomSecondsLabel">45</span> seconds. The timer keeps running after bloom so you can watch total drawdown time.</div>
+      </div>
+
+      <div class="card note" id="largeBrewNote">
+        For larger V60-03 batches, start a little coarser than your normal single-cup grind and adjust by taste rather than forcing the same drawdown time.
+      </div>
+    </section>
+
+    <section id="chart" class="view">
+      <div class="card">
+        <div class="label">Quick reference</div>
+        <div class="tableWrap">
+          <table>
+            <thead><tr><th>Coffee</th><th>Water</th><th>Bloom</th><th>Sugar</th></tr></thead>
+            <tbody id="chartBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="settings" class="view">
+      <div class="card settingsGrid">
+        <div class="field">
+          <label>Water ratio<small>Water grams per 1 g coffee</small></label>
+          <input id="waterRatio" type="number" min="1" max="30" step="0.1">
+        </div>
+        <div class="field">
+          <label>Bloom multiplier<small>Bloom water × coffee weight</small></label>
+          <input id="bloomMultiplier" type="number" min="1" max="6" step="0.1">
+        </div>
+        <div class="field">
+          <label>Coffee per person<small>Used by People mode</small></label>
+          <input id="gramsPerPerson" type="number" min="1" max="50" step="1">
+        </div>
+        <div class="field">
+          <label>Bloom time<small>Seconds before main pour prompt</small></label>
+          <input id="bloomSeconds" type="number" min="10" max="120" step="5">
+        </div>
+        <button class="primary" id="saveSettings">SAVE SETTINGS</button>
+        <button class="secondary" id="resetSettings">RESTORE YOUR DEFAULTS</button>
+        <div class="status" id="settingsStatus"></div>
+      </div>
+      <div class="card note">
+        Your defaults are 16:1 water, 3× bloom, 18 g per person, and a 45-second bloom. Settings are saved only on this device.
+      </div>
+    </section>
+  </main>
+
+<script>
+const DEFAULTS={waterRatio:16,bloomMultiplier:3,gramsPerPerson:18,bloomSeconds:45};
+let settings={...DEFAULTS,...JSON.parse(localStorage.getItem('coffeeHelperSettings')||'{}')};
+let mode='single', coffee=18, people=2;
+let timerRunning=false, timerStart=0, timerElapsed=0, timerRAF=null, wakeLock=null;
+
+const sugarPoints=[
+  [16,1.8],[18,2.2],[20,2.5],[22,2.8],[25,3.5],[27,3.7],[30,3.9],[32,4.0]
+];
+
+function sugarGuide(g){
+  if(g<=sugarPoints[0][0]) return sugarPoints[0][1];
+  for(let i=1;i<sugarPoints.length;i++){
+    const [g2,s2]=sugarPoints[i], [g1,s1]=sugarPoints[i-1];
+    if(g<=g2){
+      const t=(g-g1)/(g2-g1);
+      return Math.round((s1+(s2-s1)*t)*10)/10;
+    }
+  }
+  const [g1,s1]=sugarPoints[sugarPoints.length-2];
+  const [g2,s2]=sugarPoints[sugarPoints.length-1];
+  const slope=(s2-s1)/(g2-g1);
+  return Math.round((s2+(g-g2)*slope)*10)/10;
+}
+function currentCoffee(){ return mode==='group' ? people*settings.gramsPerPerson : coffee; }
+function update(){
+  const g=currentCoffee(), water=Math.round(g*settings.waterRatio), bloom=Math.round(g*settings.bloomMultiplier);
+  document.getElementById('coffeeValue').textContent=coffee;
+  document.getElementById('metricCoffee').textContent=g;
+  document.getElementById('metricWater').textContent=water;
+  document.getElementById('metricBloom').textContent=bloom;
+  document.getElementById('metricSugar').textContent=sugarGuide(g).toFixed(1);
+  document.getElementById('metricPeople').textContent=mode==='group'?people:Math.max(1,Math.round(g/settings.gramsPerPerson));
+  document.getElementById('target').textContent=(timerElapsed/1000 < settings.bloomSeconds)
+    ? `Bloom to ${bloom} g`
+    : `Continue pouring to ${water} g`;
+  document.getElementById('ratioBadge').textContent=`${settings.waterRatio}:1 · ${settings.bloomMultiplier}× bloom`;
+  document.getElementById('perPersonText').textContent=settings.gramsPerPerson;
+  document.getElementById('bloomSecondsLabel').textContent=settings.bloomSeconds;
+  document.querySelectorAll('#peopleGrid button').forEach(b=>b.classList.toggle('active',Number(b.dataset.people)===people));
+  document.querySelectorAll('#favorites button').forEach(b=>b.classList.toggle('active',mode==='single' && Number(b.dataset.grams)===coffee));
+  buildChart();
+}
+function buildPeople(){
+  const box=document.getElementById('peopleGrid'); box.innerHTML='';
+  for(let p=2;p<=8;p++){
+    const b=document.createElement('button'); b.textContent=p; b.dataset.people=p;
+    b.onclick=()=>{people=p;update()};
+    box.appendChild(b);
+  }
+}
+function buildChart(){
+  const body=document.getElementById('chartBody'); body.innerHTML='';
+  for(let g=16;g<=50;g++){
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${g} g</td><td>${Math.round(g*settings.waterRatio)} g</td><td>${Math.round(g*settings.bloomMultiplier)} g</td><td>${sugarGuide(g).toFixed(1)}</td>`;
+    body.appendChild(tr);
+  }
+}
+function setMode(m){
+  mode=m;
+  document.getElementById('singleMode').classList.toggle('active',m==='single');
+  document.getElementById('groupMode').classList.toggle('active',m==='group');
+  document.getElementById('singleControls').classList.toggle('hidden',m!=='single');
+  document.getElementById('groupControls').classList.toggle('hidden',m!=='group');
+  update();
+}
+document.querySelectorAll('#favorites button').forEach(b=>b.onclick=()=>{
+  coffee=Number(b.dataset.grams);
+  setMode('single');
+});
+document.getElementById('singleMode').onclick=()=>setMode('single');
+document.getElementById('groupMode').onclick=()=>setMode('group');
+document.getElementById('minusCoffee').onclick=()=>{coffee=Math.max(1,coffee-1);update()};
+document.getElementById('plusCoffee').onclick=()=>{coffee=Math.min(200,coffee+1);update()};
+
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); document.getElementById(t.dataset.view).classList.add('active');
+});
+
+async function requestWake(){
+  try{ if('wakeLock' in navigator) wakeLock=await navigator.wakeLock.request('screen'); }catch(e){}
+}
+async function releaseWake(){ try{ if(wakeLock) await wakeLock.release(); }catch(e){} wakeLock=null; }
+
+function renderTimer(){
+  const now=performance.now();
+  const ms=timerRunning ? timerElapsed+(now-timerStart) : timerElapsed;
+  const total=Math.floor(ms/1000), min=Math.floor(total/60), sec=total%60;
+  document.getElementById('timer').textContent=`${min}:${String(sec).padStart(2,'0')}`;
+  document.getElementById('phase').textContent= total<settings.bloomSeconds ? 'Bloom' : 'Main pour / drawdown';
+  update();
+  if(timerRunning) timerRAF=requestAnimationFrame(renderTimer);
+}
+document.getElementById('timerMain').onclick=async()=>{
+  if(!timerRunning){
+    timerRunning=true; timerStart=performance.now();
+    document.getElementById('timerMain').textContent='PAUSE';
+    await requestWake(); renderTimer();
+  }else{
+    timerElapsed+=performance.now()-timerStart; timerRunning=false;
+    cancelAnimationFrame(timerRAF); document.getElementById('timerMain').textContent='RESUME';
+    await releaseWake(); renderTimer();
+  }
+};
+document.getElementById('timerReset').onclick=async()=>{
+  timerRunning=false; timerElapsed=0; cancelAnimationFrame(timerRAF);
+  document.getElementById('timerMain').textContent='START BREW';
+  document.getElementById('timer').textContent='0:00';
+  document.getElementById('phase').textContent='Ready';
+  await releaseWake(); update();
+};
+
+function syncSettingsFields(){
+  waterRatio.value=settings.waterRatio; bloomMultiplier.value=settings.bloomMultiplier;
+  gramsPerPerson.value=settings.gramsPerPerson; bloomSeconds.value=settings.bloomSeconds;
+}
+document.getElementById('saveSettings').onclick=()=>{
+  settings={
+    waterRatio:Number(waterRatio.value)||DEFAULTS.waterRatio,
+    bloomMultiplier:Number(bloomMultiplier.value)||DEFAULTS.bloomMultiplier,
+    gramsPerPerson:Number(gramsPerPerson.value)||DEFAULTS.gramsPerPerson,
+    bloomSeconds:Number(bloomSeconds.value)||DEFAULTS.bloomSeconds
+  };
+  localStorage.setItem('coffeeHelperSettings',JSON.stringify(settings));
+  settingsStatus.textContent='Saved.';
+  setTimeout(()=>settingsStatus.textContent='',1500); update();
+};
+document.getElementById('resetSettings').onclick=()=>{
+  settings={...DEFAULTS}; localStorage.setItem('coffeeHelperSettings',JSON.stringify(settings));
+  syncSettingsFields(); settingsStatus.textContent='Defaults restored.';
+  setTimeout(()=>settingsStatus.textContent='',1500); update();
+};
+
+document.addEventListener('visibilitychange',async()=>{
+  if(document.visibilityState==='visible' && timerRunning) await requestWake();
+});
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  navigator.serviceWorker.register('service-worker.js').then(reg=>reg.update().catch(()=>{})).catch(()=>{});
+}
+buildPeople(); syncSettingsFields(); update();
+</script>
+</body>
+</html>
