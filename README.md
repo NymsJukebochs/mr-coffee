@@ -1,5 +1,5 @@
 # Mr Coffee
-Current build: **v1.3.2 — Android Icon Fix**
+Current build: **v1.3.3 — Styled Maskable Icon**
 
 ## GitHub Pages setup
 1. Create a new repository named `mr-coffee`.
@@ -17,3 +17,6 @@ This build replaces the placeholder app icon with the detailed red V60 icon artw
 
 
 v1.3.2 adds separate standard and maskable icon assets for Android/PWA installation.
+
+
+v1.3.3 redesigns the Android maskable icon to fill the circular launcher mask more boldly, closer to the user's mockup.
