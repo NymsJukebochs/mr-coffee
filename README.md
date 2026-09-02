@@ -26,3 +26,6 @@ v1.3.4 removes maskable/adaptive icon assets entirely and uses only transparent 
 
 
 v1.3.5 reduces the V60 icon size within the transparent square so Android launchers can display the full dripper more comfortably inside their icon mask.
+
+
+v1.3.6 makes the transparent icon larger and centers it by the visible artwork's weighted center instead of the total bounding box.
