@@ -29,3 +29,6 @@ v1.3.5 reduces the V60 icon size within the transparent square so Android launch
 
 
 v1.3.6 makes the transparent icon larger and centers it by the visible artwork's weighted center instead of the total bounding box.
+
+
+v1.3.7 increases the transparent icon scale while keeping weighted-center placement, for a larger V60 within launcher-imposed circular backgrounds.
