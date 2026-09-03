@@ -1,52 +1,24 @@
-# Mr Coffee
-Current build: **v1.3.3 — Styled Maskable Icon**
+# Mr Coffee — v1.4.4 Installability Diagnostic
 
-## GitHub Pages setup
-1. Create a new repository named `mr-coffee`.
-2. Upload every file in this package to the repository root.
-3. Open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Choose **main** and **/(root)**, then Save.
-6. Open the HTTPS Pages address GitHub gives you on Android.
-7. In Chrome or Brave choose **Install app** / **Add to Home screen**.
+This build stops changing the icon and focuses only on determining why Chrome is falling back to a browser-badged shortcut instead of minting a WebAPK.
 
-This build is installable, works offline after first load, shows its version, and uses a network-first update path for the main page so frequent testing is less likely to get stuck on an old cached build.
+## Important changes
+- Explicit `/mr-coffee/` manifest `id`, `start_url`, and `scope`.
+- Explicit absolute icon URLs.
+- `prefer_related_applications: false`.
+- Cleaned service worker cache list and registration scope.
+- Added a PWA install-check panel under **Settings**.
+- Captures Chrome's `beforeinstallprompt` event.
+- Shows whether the service worker is actively controlling the page.
+- Provides its own **INSTALL MR COFFEE** button only if Chrome reports full PWA installability.
 
+## Test
+1. Upload these files to the root of the existing `mr-coffee` GitHub repository.
+2. Wait for GitHub Pages to redeploy.
+3. Remove old Mr Coffee home-screen shortcuts/apps.
+4. In Chrome, visit `https://nymsjukebochs.github.io/mr-coffee/`.
+5. Tap/interact with the page and keep it open at least 30 seconds.
+6. Open **Settings** inside Mr Coffee and read the three PWA install-check rows.
+7. If **Install prompt** says `READY — FULL PWA CRITERIA MET`, use the in-app **INSTALL MR COFFEE** button rather than Chrome's generic Add to Home screen flow.
 
-This build replaces the placeholder app icon with the detailed red V60 icon artwork.
-
-
-v1.3.2 adds separate standard and maskable icon assets for Android/PWA installation.
-
-
-v1.3.3 redesigns the Android maskable icon to fill the circular launcher mask more boldly, closer to the user's mockup.
-
-
-v1.3.4 removes maskable/adaptive icon assets entirely and uses only transparent standard icons, to test whether Android preserves the V60 silhouette and handle without a background tile.
-
-
-v1.3.5 reduces the V60 icon size within the transparent square so Android launchers can display the full dripper more comfortably inside their icon mask.
-
-
-v1.3.6 makes the transparent icon larger and centers it by the visible artwork's weighted center instead of the total bounding box.
-
-
-v1.3.7 increases the transparent icon scale while keeping weighted-center placement, for a larger V60 within launcher-imposed circular backgrounds.
-
-
-v1.3.8 enlarges the transparent icon again and centers it specifically on the dripper hole / main red circle rather than on the whole artwork.
-
-
-v1.3.9 removes the handle from the icon art and centers a larger main dripper circle inside the launcher-imposed white circle.
-
-
-v1.4.0 updates the app icon to use the new centered red dripper artwork.
-
-
-v1.4.1 updates the app icon to use the user-provided white-backed V60 composition.
-
-
-v1.4.2 updates the app icon to use the user-provided full-bleed white source and adds explicit maskable icon entries.
-
-
-v1.4.3 uses separate regular and maskable icon artwork. The maskable icons are deliberately enlarged relative to the regular icons so the V60 body occupies more of the Android launcher badge.
+If the prompt becomes READY but Android still creates only a browser-badged shortcut, the web app has passed Chrome's installability criteria and the remaining problem is WebAPK minting/device/browser infrastructure rather than the manifest or artwork.

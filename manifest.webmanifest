@@ -1,37 +1,38 @@
 {
+  "id": "/mr-coffee/",
   "name": "Mr Coffee",
   "short_name": "Mr Coffee",
-  "start_url": "./",
+  "description": "A lightweight V60 pour-over brewing helper.",
+  "start_url": "/mr-coffee/",
+  "scope": "/mr-coffee/",
   "display": "standalone",
   "background_color": "#171411",
   "theme_color": "#171411",
-  "description": "A lightweight V60 pour-over brewing helper.",
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "icon-maskable-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon-maskable-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "icon-192.png",
+      "src": "/mr-coffee/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "/mr-coffee/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/mr-coffee/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/mr-coffee/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
-  ],
-  "id": "./",
-  "scope": "./"
+  ]
 }

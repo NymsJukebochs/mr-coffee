@@ -5,7 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#171411">
   <title>Mr Coffee</title>
-  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="manifest" href="/mr-coffee/manifest.webmanifest">
+  <link rel="icon" href="/mr-coffee/icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="Mr Coffee">
   <style>
     :root{
       --bg:#171411;
@@ -74,6 +77,10 @@
     input{width:100%;padding:11px 10px;border-radius:12px;border:1px solid var(--line);background:#12100e;color:var(--text);text-align:right}
     .status{font-size:.8rem;color:var(--good);margin-top:8px;text-align:center;min-height:20px}
     .note{padding:12px 13px;border-radius:14px;background:#16130f;border:1px solid var(--line);color:var(--muted);font-size:.84rem;line-height:1.45}
+    .installDiag{display:grid;gap:8px;margin-top:10px}
+    .diagRow{display:flex;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:11px;background:#12100e;font-size:.82rem}
+    .diagRow span:last-child{font-weight:800;text-align:right}
+    .diagGood{color:var(--good)} .diagWarn{color:var(--accent2)} .diagBad{color:var(--danger)}
     .hidden{display:none!important}
   </style>
 </head>
@@ -84,7 +91,7 @@
         <h1>☕ Mr Coffee</h1>
         <div class="sub">V60 scale-side helper</div>
       </div>
-      <div style="text-align:right"><div class="pill" id="ratioBadge">16:1 · 3× bloom</div><div class="sub" style="margin-top:5px">Mr Coffee · v1.4.3</div></div>
+      <div style="text-align:right"><div class="pill" id="ratioBadge">16:1 · 3× bloom</div><div class="sub" style="margin-top:5px">Mr Coffee · v1.4.4</div></div>
     </div>
 
     <div class="tabs">
@@ -189,6 +196,16 @@
         <button class="primary" id="saveSettings">SAVE SETTINGS</button>
         <button class="secondary" id="resetSettings">RESTORE YOUR DEFAULTS</button>
         <div class="status" id="settingsStatus"></div>
+        <div class="note">
+          <strong>PWA install check</strong>
+          <div class="installDiag">
+            <div class="diagRow"><span>Display mode</span><span id="diagDisplay">Checking…</span></div>
+            <div class="diagRow"><span>Service worker</span><span id="diagSW">Checking…</span></div>
+            <div class="diagRow"><span>Install prompt</span><span id="diagPrompt">Waiting…</span></div>
+          </div>
+          <button class="primary hidden" id="installAppBtn" style="margin-top:10px">INSTALL MR COFFEE</button>
+          <div class="hint" id="diagHelp">Open this page in Chrome and leave it open for about 30 seconds. If Chrome considers it fully installable, the Install prompt row should change to READY.</div>
+        </div>
       </div>
       <div class="card note">
         Your defaults are 16:1 water, 3× bloom, 18 g per person, and a 45-second bloom. Settings are saved only on this device.
@@ -335,10 +352,79 @@ document.getElementById('resetSettings').onclick=()=>{
 document.addEventListener('visibilitychange',async()=>{
   if(document.visibilityState==='visible' && timerRunning) await requestWake();
 });
-if('serviceWorker' in navigator && location.protocol.startsWith('http')){
-  navigator.serviceWorker.register('service-worker.js').then(reg=>reg.update().catch(()=>{})).catch(()=>{});
+let deferredInstallPrompt = null;
+
+function setDiag(id, text, cls=''){
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = text;
+  el.className = cls;
 }
-buildPeople(); syncSettingsFields(); update();
+
+function refreshInstallDiagnostics(){
+  const standalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.matchMedia('(display-mode: fullscreen)').matches ||
+    navigator.standalone === true;
+  setDiag('diagDisplay', standalone ? 'INSTALLED / STANDALONE' : 'BROWSER TAB', standalone ? 'diagGood' : 'diagWarn');
+
+  if (!('serviceWorker' in navigator)) {
+    setDiag('diagSW', 'UNSUPPORTED', 'diagBad');
+  } else if (navigator.serviceWorker.controller) {
+    setDiag('diagSW', 'ACTIVE + CONTROLLING', 'diagGood');
+  } else {
+    setDiag('diagSW', 'REGISTERED / NOT CONTROLLING YET', 'diagWarn');
+  }
+
+  const btn = document.getElementById('installAppBtn');
+  if (standalone) {
+    setDiag('diagPrompt', 'ALREADY INSTALLED', 'diagGood');
+    btn?.classList.add('hidden');
+  } else if (deferredInstallPrompt) {
+    setDiag('diagPrompt', 'READY — FULL PWA CRITERIA MET', 'diagGood');
+    btn?.classList.remove('hidden');
+  } else {
+    setDiag('diagPrompt', 'NOT RECEIVED YET', 'diagWarn');
+    btn?.classList.add('hidden');
+  }
+}
+
+window.addEventListener('beforeinstallprompt', event => {
+  event.preventDefault();
+  deferredInstallPrompt = event;
+  refreshInstallDiagnostics();
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  refreshInstallDiagnostics();
+});
+
+document.getElementById('installAppBtn')?.addEventListener('click', async () => {
+  if (!deferredInstallPrompt) return;
+  const promptEvent = deferredInstallPrompt;
+  deferredInstallPrompt = null;
+  await promptEvent.prompt();
+  try { await promptEvent.userChoice; } catch (_) {}
+  refreshInstallDiagnostics();
+});
+
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register('/mr-coffee/service-worker.js', { scope: '/mr-coffee/' })
+    .then(async reg => {
+      try { await reg.update(); } catch (_) {}
+      try { await navigator.serviceWorker.ready; } catch (_) {}
+      refreshInstallDiagnostics();
+    })
+    .catch(() => {
+      setDiag('diagSW', 'REGISTRATION FAILED', 'diagBad');
+    });
+}
+
+navigator.serviceWorker?.addEventListener('controllerchange', refreshInstallDiagnostics);
+window.matchMedia('(display-mode: standalone)').addEventListener?.('change', refreshInstallDiagnostics);
+
+buildPeople(); syncSettingsFields(); update(); refreshInstallDiagnostics();
 </script>
 </body>
 </html>
