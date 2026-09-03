@@ -1,4 +1,4 @@
-const CACHE = 'mr-coffee-v1.4.4';
+const CACHE = 'mr-coffee-v1.4.5';
 const ROOT = '/mr-coffee/';
 const CORE = [
   ROOT,
