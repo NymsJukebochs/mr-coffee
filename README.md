@@ -1,10 +1,16 @@
-# Mr Coffee — v1.4.5 WebAPK Icon Calibration
+# Mr Coffee — v1.4.6 Fine-Tuned Maskable Icon
 
-This build preserves the v1.4.4 WebAPK/installability fix.
+This build preserves the proven WebAPK/PWA installability setup from v1.4.5.
 
-The only intentional change is the icon artwork:
-- removes the previous 1.13× aggressive maskable enlargement
-- uses the full-bleed user-provided V60 icon at its original 1.00× size
-- keeps separate `any` and `maskable` manifest entries
+Only one thing changed:
+- the maskable launcher icon was scaled down slightly to 96% of the v1.4.5 size
 
-Why: v1.4.4 proved the app is now installing as a real PWA/WebAPK. The home-screen icon and install notification now match, which means Android is finally using the intended icon path. The prior aggressive enlargement was therefore genuinely too large. This build returns to the exact source scale that previously looked correct in the install notification.
+What stayed the same:
+- regular `any` icons unchanged
+- centering unchanged
+- white full-bleed background unchanged
+- manifest / scope / service-worker installability setup unchanged
+
+Purpose:
+- reduce the launcher icon zoom very slightly
+- keep the current good overall look while giving the red V60 and handle a bit more breathing room
